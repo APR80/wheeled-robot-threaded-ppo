@@ -1,0 +1,120 @@
+<mujoco model="wheeled_legged">
+    <option gravity="0 0 -9.81" timestep="0.002"/>
+
+    <visual>
+        <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+        <rgba haze="0.15 0.25 0.35 1"/>
+        <global azimuth="120" elevation="-20" offwidth="1920" offheight="1080"/>
+        <quality shadowsize="4096" offsamples="8"/>
+        <map force="0.01" zfar="40"/>
+    </visual>
+
+    <asset>
+        <mesh name="wheel" file="wheel.STL" scale="0.1 0.1 0.1"/>
+        <mesh name="base" file="base.STL" scale="0.1 0.1 0.1"/>
+        <mesh name="upperleg" file="upperleg.STL" scale="0.1 0.1 0.1"/>
+        <mesh name="lowerleg" file="lowerleg.STL" scale="0.1 0.1 0.1"/>
+        <mesh name="support" file="support.STL" scale="0.1 0.1 0.1"/>
+
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+        <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+        <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="4 4" reflectance="0.15"/>
+    </asset>
+
+    <default>
+        <default class="no_contact">
+            <geom contype="0" conaffinity="0" group="2"/>
+        </default>
+        <default class="contact">
+            <geom contype="1" conaffinity="1" group="2"/>
+        </default>
+    </default>
+
+    <worldbody>
+        <light pos="0 0 6" dir="0 0 -1" directional="true" diffuse="0.5 0.5 0.5"/>
+        <light pos="4 -4 5" dir="-0.6 0.6 -1" directional="false" diffuse="0.4 0.4 0.4" castshadow="true"/>
+        <geom name="floor" size="0 0 0.25" type="plane" material="groundplane" class="contact"
+              friction="1.2 0.005 0.0001"/>
+
+        <body name="base" pos="0 0 1.437">
+            <geom name="base" type="mesh" mesh="base" mass="92.7" rgba="0.85 0.85 0.88 1"
+                  quat="0.70710678118655 0.70710678118655 0 0" class="contact"/>
+            <joint name="root" type="free"/>
+            <camera name="track" mode="trackcom" pos="2.8 -2.3 1.0" xyaxes="0.635 0.773 0 -0.206 0.169 0.964"/>
+            <camera name="side" mode="trackcom" pos="3.2 0 0.55" xyaxes="0 1 0 -0.169 0 0.986"/>
+
+            <body name="left_leg" pos="0.65 -0.2 -0.2">
+                <geom type="mesh" mesh="upperleg" mass="12.5" class="no_contact" rgba="0.3 0.35 0.4 1"/>
+                <joint name="left_upperleg_joint" type="hinge" axis="1 0 0" damping="5" armature="0.2"/>
+                <body name="left_lowerleg" pos="-0.08 0.752 -0.273">
+                    <geom type="mesh" mesh="lowerleg" mass="7.5" class="no_contact" rgba="0 0.7 0.75 1"/>
+                    <joint name="left_lowerleg_joint" type="hinge" axis="1 0 0" damping="5" armature="0.2"/>
+                    <body name="left_wheel" pos="0.2 -0.513 -0.614">
+                        <geom type="mesh" mesh="wheel" mass="5.6" class="contact" rgba="0.15 0.15 0.2 1"
+                              friction="1.2 0.005 0.0001"/>
+                        <joint name="left_wheel_joint" type="hinge" axis="1 0 0" damping="0.5" armature="0.5"/>
+                    </body>
+                </body>
+            </body>
+
+            <body name="right_leg" pos="-0.65 -0.2 -0.2">
+                <geom type="mesh" mesh="upperleg" mass="12.5" class="no_contact" rgba="0.3 0.35 0.4 1"/>
+                <joint name="right_upperleg_joint" type="hinge" axis="1 0 0" damping="5" armature="0.2"/>
+                <body name="right_lowerleg" pos="0.08 0.752 -0.273" quat="0 0. 0.64073159 0.76776496">
+                    <geom type="mesh" mesh="lowerleg" mass="7.5" class="no_contact" rgba="0 0.7 0.75 1"/>
+                    <joint name="right_lowerleg_joint" type="hinge" axis="-1 0 0" damping="5" armature="0.2"/>
+                    <body name="right_wheel" pos="0.2 -0.513 -0.614">
+                        <geom type="mesh" mesh="wheel" mass="5.6" class="contact" rgba="0.15 0.15 0.2 1"
+                              friction="1.2 0.005 0.0001"/>
+                        <joint name="right_wheel_joint" type="hinge" axis="-1 0 0" damping="0.5" armature="0.5"/>
+                    </body>
+                </body>
+            </body>
+
+            <body name="right_support" pos="-0.65 0.4 0.1">
+                <geom type="mesh" mesh="support" mass="3.0" class="no_contact" rgba="0 0.7 0.75 1"/>
+                <joint name="right_support_joint" type="hinge" axis="1 0 0" damping="5" armature="0.2"/>
+                <site name="right_support_site" size="0.1" group="3" pos="0 0.45315389351832 -0.21130913087035"/>
+            </body>
+            <body name="left_support" pos="0.65 0.4 0.1">
+                <geom type="mesh" mesh="support" mass="3.0" class="no_contact" rgba="0 0.7 0.75 1"/>
+                <joint name="left_support_joint" type="hinge" axis="1 0 0" damping="5" armature="0.2"/>
+                <site name="left_support_site" size="0.1" group="3" pos="0 0.45315389351832 -0.21130913087035"/>
+            </body>
+        </body>
+    </worldbody>
+
+    <contact>
+        <exclude body1="base" body2="right_leg"/>
+        <exclude body1="base" body2="left_leg"/>
+        <exclude body1="base" body2="right_support"/>
+        <exclude body1="base" body2="left_support"/>
+        <exclude body1="base" body2="left_lowerleg"/>
+        <exclude body1="base" body2="right_lowerleg"/>
+        <exclude body1="left_leg" body2="left_lowerleg"/>
+        <exclude body1="right_leg" body2="right_lowerleg"/>
+        <exclude body1="left_support" body2="left_lowerleg"/>
+        <exclude body1="right_support" body2="right_lowerleg"/>
+        <exclude body1="left_lowerleg" body2="left_wheel"/>
+        <exclude body1="right_lowerleg" body2="right_wheel"/>
+    </contact>
+    <equality>
+        <connect name="left_att" body1="left_support" body2="left_lowerleg" anchor="0 0.45315389351832 -0.21130913087035"/>
+        <connect name="right_att" body1="right_support" body2="right_lowerleg" anchor="0 0.45315389351832 -0.21130913087035"/>
+    </equality>
+
+    <actuator>
+        <position name="left_leg_actuator" joint="left_upperleg_joint" kp="4000" kv="200" ctrlrange="0 0.30"/>
+        <position name="right_leg_actuator" joint="right_upperleg_joint" kp="4000" kv="200" ctrlrange="0 0.30"/>
+        <motor name="left_wheel_actuator" joint="left_wheel_joint" gear="200" ctrlrange="-1 1"/>
+        <motor name="right_wheel_actuator" joint="right_wheel_joint" gear="200" ctrlrange="-1 1"/>
+    </actuator>
+
+    <sensor>
+        <framequat name="framequat" objname="base" objtype="xbody"/>
+    </sensor>
+
+    <keyframe>
+        <key name="stand" qpos="0 0 1.437 1 0 0 0 0 0 0 0 0 0 0 0"/>
+    </keyframe>
+</mujoco>
