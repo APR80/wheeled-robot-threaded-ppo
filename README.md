@@ -4,6 +4,10 @@ A PPO implementation, built on a threaded vectorised MuJoCo environment, that tr
 
 A hand-tuned analytic controller is included as a baseline to compare the learned policy against.
 
+[![Wheeled-Legged Robot: Fast Parallel PPO](https://img.youtube.com/vi/jld0LdgmoZQ/maxresdefault.jpg)](https://youtu.be/jld0LdgmoZQ)
+
+[https://youtu.be/jld0LdgmoZQ](https://youtu.be/jld0LdgmoZQ)
+
 ## What it does
 
 The policy receives a command `(forward velocity, yaw rate, ride height)` and outputs hip position targets and wheel torques, keeping the robot upright while it follows the command. The same command vector is what you drive from the keyboard in `teleop.py`.
